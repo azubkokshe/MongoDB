@@ -1,0 +1,18 @@
+1. Ставим mongodb
+2. Ставим compass
+3. Запускаем mongodb-compass
+4. Поиск и инкремент: db.users.update({uid : "zubalex"}, {$inc: {counter : 1}})
+5. Поиск и добавление в массив: db.users.update({uid : "zubalex"}, {$addToSet: {users: {uid : "x", name: "n1"} }, {$inc: {counter : 1}})
+6. Удалить значение из массива: db.users.update({uid : "zubalex"}, {$pull: {users: {uid : "x", name: "n1"} }})
+7. Объединение: db.users.update({"uid" : "zubalex"}, {"$addToSet": {users: {uid : "x", name: "n1"}}, "$inc": {counter : 1}})
+8. Подсчет элементов в массив (агрегация): 
+db.users.aggregate(
+[
+{
+      $project: {
+         uid: 1,
+         numberOfUsers: { $cond: { if: { $isArray: "$users" }, then: { $size: "$users" }, else: "NA"} }
+      }
+}
+]
+)
