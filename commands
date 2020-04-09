@@ -39,3 +39,5 @@ db.collection('members').updateMany
                     $pull : { users : { uid : user.id } }
                 }
             );
+11. cli: начать использовать базу use bd_name
+12. cli: выборка: db.collection_name.find().pretty()
