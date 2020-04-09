@@ -16,3 +16,26 @@ db.users.aggregate(
 }
 ]
 )
+9. Обновление, если нет до создание:
+db.collection('members').updateOne
+                (
+                    {
+                        "chat_id" : chat.id, "uid" : from.id
+                    },
+                    {
+                        $addToSet: {users: {uid : user.id, first_name: user.first_name, last_name: user.last_name, date: new Date()} },
+                        $set: {uid : from.id, chat_id: chat.id, first_name: from.first_name, last_name: from.last_name, chat_title: chat.title}
+                    },
+                    {
+                        upsert: true
+                    }
+                );
+10. Обновление. Удаление из массива объект по определенным значениям ключей:
+db.collection('members').updateMany
+            (
+                {
+                },
+                {
+                    $pull : { users : { uid : user.id } }
+                }
+            );
