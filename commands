@@ -18,26 +18,49 @@ db.users.aggregate(
 )
 9. Обновление, если нет до создание:
 db.collection('members').updateOne
-                (
-                    {
-                        "chat_id" : chat.id, "uid" : from.id
-                    },
-                    {
-                        $addToSet: {users: {uid : user.id, first_name: user.first_name, last_name: user.last_name, date: new Date()} },
-                        $set: {uid : from.id, chat_id: chat.id, first_name: from.first_name, last_name: from.last_name, chat_title: chat.title}
-                    },
-                    {
-                        upsert: true
-                    }
-                );
+(
+{
+"chat_id" : chat.id, "uid" : from.id
+},
+{
+$addToSet: {users: {uid : user.id, first_name: user.first_name, last_name: user.last_name, date: new Date()} },
+$set: {uid : from.id, chat_id: chat.id, first_name: from.first_name, last_name: from.last_name, chat_title: chat.title}
+},
+{
+upsert: true
+}
+);
 10. Обновление. Удаление из массива объект по определенным значениям ключей:
 db.collection('members').updateMany
-            (
-                {
-                },
-                {
-                    $pull : { users : { uid : user.id } }
-                }
-            );
+(
+{
+},
+{
+$pull : { users : { uid : user.id } }
+}
+);
 11. cli: начать использовать базу use bd_name
 12. cli: выборка: db.collection_name.find().pretty()
+13. Агрегация:
+db.collection('members').aggregate
+        (
+            [
+                {
+                    $project: {
+                        uid: 1,
+                        first_name: 1,
+                        last_name: 1,
+                        numberOfUsers: { $cond: { if: { $isArray: "$users" }, then: { $size: "$users" }, else: 0} }
+                    }
+                }
+                ,
+                { $match : { numberOfUsers : {$gt :  0} } },
+                { $limit : 10 },
+                { $sort : { numberOfUsers : -1 } }
+
+            ]
+        ).toArray(function (err, result) {
+            if (result){
+            }
+           });
+14. Выборка: db.collection('members').findOne({uid : from.id}).then(record => {})
